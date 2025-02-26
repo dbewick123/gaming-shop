@@ -14,6 +14,7 @@ const Cart = sequelize.define('Cart', {
   },
 }, {
   tableName: 'cart',
+  schema: sequelize.options.schema,
   timestamps: false,
 });
 

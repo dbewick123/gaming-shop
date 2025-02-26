@@ -33,6 +33,7 @@ const ProductReview = sequelize.define('ProductReview', {
   },
 }, {
   tableName: 'product_reviews',
+  schema: sequelize.options.schema,
   timestamps: false,  
 });
 

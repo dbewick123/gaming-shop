@@ -22,6 +22,7 @@ const User = sequelize.define('User', {
   },
 }, {
   tableName: 'users', 
+  schema: sequelize.options.schema,
   timestamps: false, 
 });
 

@@ -36,13 +36,12 @@ cartRouter.get('/', isAuthenticated, async (req, res) => {
 
 // Create a new cart with at least one item
 cartRouter.post('/', isAuthenticated, async (req, res) => {
-  const { items } = req.body;
   const user_id = req.session.user.id;
 
 
   // Validate input
-  if (!user_id || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ message: 'User ID and at least one item are required' });
+  if (!user_id) {
+    return res.status(400).json({ message: 'User ID is required' });
   }
 
   try {
@@ -56,22 +55,6 @@ cartRouter.post('/', isAuthenticated, async (req, res) => {
     const result = await Cart.sequelize.transaction(async (t) => {
       // Create cart
       const newCart = await Cart.create({ user_id }, { transaction: t });
-
-      // Add items
-      for (const item of items) {
-        const { product_id, quantity } = item;
-
-        const product = await Product.findByPk(product_id);
-        if (!product) {
-          throw new Error(`Product with ID ${product_id} not found`);
-        }
-
-        await CartItem.create({
-          cart_id: newCart.id,
-          product_id,
-          quantity,
-        }, { transaction: t });
-      }
 
       return newCart;
     });

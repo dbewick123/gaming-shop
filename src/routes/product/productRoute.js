@@ -78,8 +78,8 @@ productRouter.get('/:id/reviews', async (req, res) => {
 // Post a review for a product
 productRouter.post('/:id/reviews', isAuthenticated, async (req, res) => {
     const { id } = req.params;
-    const { user_id, rating, comment } = req.body;
-  
+    const { rating, comment } = req.body;
+    const user_id = req.session.user.id;
     // Basic validation
     if (!user_id || !rating) {
       return res.status(400).json({ message: 'User ID and rating are required' });
