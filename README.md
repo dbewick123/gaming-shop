@@ -16,7 +16,7 @@ The swagger documentation can be found here: https://app.swaggerhub.com/apis-doc
 
 1. Clone this repo & install all dependencies with npm install. You will need node and npm installed already for this. 
 2. Create a postgres DB on your local machine and update the database.js & testDatabase.js files with connection info. Note, you need to create an empty test and a dev database in this step
-3. Run the setup.sql file to create your database tables in both test and dev. This will only setup your database structure, without data. 
+3. Run the setup.sql file to create your database tables in both test and dev. This will only setup your database structure, without data. Note, you needs to replace YOUR_ROLE and YOUR_API_ROLE with the user/role that you wish to run the DB transactions with
 4. Create a .env file at root level and include the following. Note the secret key can be anything you choose, however, I recommend using an online tool to generate a long key for you. 
 
     `SESSION_SECRET=YOUR_SECRET_KEY_HERE`
