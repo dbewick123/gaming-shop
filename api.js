@@ -17,13 +17,12 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 60 * 60 * 1000 }, 
+    cookie: { maxAge: 60 * 60 * 1000, httpOnly: true }, 
   })
 );
 
 // Connect to DB
 sequelize.authenticate()
-  .then(() => console.log('Database connected'))
   .catch(err => console.error('Database connection error:', err));
 
 // Use Routes
@@ -37,5 +36,11 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app; 

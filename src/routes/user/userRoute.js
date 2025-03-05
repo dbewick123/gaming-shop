@@ -79,9 +79,9 @@ userRouter.post('/signup', async (req, res) => {
 
 
 // Get User (Authenticated)
-userRouter.get('/', isAuthenticated, async (req, res) => {
+userRouter.get('/:userid', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findByPk(req.session.user.id, {
+    const user = await User.findByPk(req.params.userid, {
       attributes: ['id', 'name', 'email'],
     });
 
@@ -95,18 +95,18 @@ userRouter.get('/', isAuthenticated, async (req, res) => {
 });
 
 // Update User (Authenticated)
-userRouter.put('/', isAuthenticated, async (req, res) => {
+userRouter.put('/:userid', isAuthenticated, async (req, res) => {
   const { name, email } = req.body;
 
   try {
     const [updated] = await User.update(
       { name, email },
-      { where: { id: req.session.user.id } }
+      { where: { id: req.params.userid } }
     );
 
     if (!updated) return res.status(404).json({ message: 'User Not Found' });
 
-    const updatedUser = await User.findByPk(req.session.user.id, {
+    const updatedUser = await User.findByPk(req.params.userid, {
       attributes: ['id', 'name', 'email'],
     });
 

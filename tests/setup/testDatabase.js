@@ -1,19 +1,17 @@
 const sequelize = require('../../src/config/database');
 
-// Get the schema from the active Sequelize instance
-const SCHEMA = sequelize.options.schema;
-
-const resetDatabase = async () => {
-  await sequelize.query(`
-    DO $$ DECLARE
-        r RECORD;
-    BEGIN
-        FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = '${SCHEMA}') LOOP
-            EXECUTE 'TRUNCATE TABLE ${SCHEMA}.' || r.tablename || ' RESTART IDENTITY CASCADE';
-        END LOOP;
-    END $$;
-  `);
+const resetDatabase = async (test) => {
+  console.log(`Running test: ${test}`);
+  try {
+    await sequelize.query(
+      'TRUNCATE TABLE users, products, product_reviews, orders, cart_items, cart, order_items RESTART IDENTITY CASCADE;',
+      { raw: true }
+    );
+  } catch (error) {
+    console.error('Error resetting database:', error);
+  }
 };
+
 
 module.exports = { resetDatabase };
 

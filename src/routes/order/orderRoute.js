@@ -6,8 +6,8 @@ const { Order, OrderItem, Product } = require('../../models/index');
 const orderRouter = express.Router();
 
 // Fetch a single order by ID with its items
-orderRouter.get('/:id', isAuthenticated, async (req, res) => {
-  const { id } = req.params;
+orderRouter.get('/:userid/:id', isAuthenticated, async (req, res) => {
+  const { id, userid } = req.params;
 
   try {
     const order = await Order.findByPk(id, {
@@ -22,7 +22,9 @@ orderRouter.get('/:id', isAuthenticated, async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
-
+    else if (order.dataValues.user_id != userid) {
+      return res.status(403).json({ message: 'Order belongs to another user' });
+    }
     res.json(order);
   } catch (error) {
     console.error('Error fetching order:', error);
@@ -31,12 +33,12 @@ orderRouter.get('/:id', isAuthenticated, async (req, res) => {
 });
 
 // Create a new order with items
-orderRouter.post('/', isAuthenticated, async (req, res) => {
+orderRouter.post('/:userid', isAuthenticated, async (req, res) => {
   const { items } = req.body;
-  const user_id = req.session.user.id;
+  const userid = req.params.userid;
 
   // Basic validation
-  if (!user_id || !Array.isArray(items) || items.length === 0) {
+  if (!userid || !Array.isArray(items) || items.length === 0) {
     return res.status(400).json({ message: 'User ID and items are required' });
   }
 
@@ -48,7 +50,7 @@ orderRouter.post('/', isAuthenticated, async (req, res) => {
       // Create the order
       const newOrder = await Order.create(
         {
-          user_id,
+          user_id: userid,
           total: 0,  // Temp total, will update later
           status: 'pending',
         },
@@ -97,7 +99,7 @@ orderRouter.post('/', isAuthenticated, async (req, res) => {
       return newOrder;
     });
 
-    res.status(201).json({ message: 'Order created', order: result });
+    res.status(201).json({ message: 'Order Created', order: result });
   } catch (error) {
     console.error('Error creating order:', error);
     res.status(500).json({ error: error.message });

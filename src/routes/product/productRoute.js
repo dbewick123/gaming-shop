@@ -39,7 +39,7 @@ productRouter.put('/:id/stock', isAuthenticated, async (req, res) => {
 
   // Basic validation
   if (stock === undefined || stock < 0) {
-    return res.status(400).json({ message: 'Invalid stock value' });
+    return res.status(400).json({ message: 'Invalid Stock Value' });
   }
 
   try {
@@ -53,7 +53,7 @@ productRouter.put('/:id/stock', isAuthenticated, async (req, res) => {
     product.stock = stock;
     await product.save();
 
-    res.json({ message: 'Stock updated', product });
+    res.json({ message: 'Stock Updated', product });
   } catch (error) {
     console.error('Error updating stock:', error);
     res.status(500).json({ error: error });
@@ -76,24 +76,23 @@ productRouter.get('/:id/reviews', async (req, res) => {
 });
   
 // Post a review for a product
-productRouter.post('/:id/reviews', isAuthenticated, async (req, res) => {
-    const { id } = req.params;
+productRouter.post('/:userid/:id/reviews', isAuthenticated, async (req, res) => {
+    const { id, userid } = req.params;
     const { rating, comment } = req.body;
-    const user_id = req.session.user.id;
     // Basic validation
-    if (!user_id || !rating) {
+    if (!userid || !rating) {
       return res.status(400).json({ message: 'User ID and rating are required' });
     }
   
     try {
       const newReview = await ProductReview.create({
         product_id: id,
-        user_id,
+        user_id: userid,
         rating,
         comment,
       });
   
-      res.status(201).json({ message: 'Review added', review: newReview });
+      res.status(201).json({ message: 'Review Added', review: newReview });
     } catch (error) {
       console.error('Error adding product review:', error);
       res.status(500).json({ error: error });
