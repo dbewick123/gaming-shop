@@ -1,0 +1,377 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: game-shop-api
+  description: 'API for managing e-commerce activities on a fictitious game store website '
+paths:
+  /cart/{userid}:
+    post:
+      summary: Create a New Cart
+      tags:
+        - Carts
+      parameters:
+        - name: userid
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "201":
+          description: Cart created successfully
+          content:
+            application/json:
+              example:
+                message: "Cart Created"
+                cart:
+                  id: 1
+                  user_id: 1
+    put:
+      summary: Update Cart Items
+      tags:
+        - Carts
+      parameters:
+        - name: userid
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              items:
+                - cart_id: 1
+                  product_id: 1
+                  quantity: 2
+                - cart_id: 1
+                  product_id: 3
+                  quantity: 1
+      responses:
+        "200":
+          description: Cart updated successfully
+          content:
+            application/json:
+              example:
+                message: "Cart Updated Successfully"
+                cart:
+                  id: 1
+                  user_id: 1
+    get:
+      summary: Retrieve User's Cart
+      tags:
+        - Carts
+      parameters:
+        - name: userid
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Cart details retrieved
+          content:
+            application/json:
+              example:
+                id: 1
+                user_id: 1
+                items:
+                  - cart_id: 1
+                    product_id: 1
+                    quantity: 2
+                    product:
+                      id: 1
+                      name: "Dragon Quest 3"
+                      price: "46.95"
+                      stock: 7
+                  - cart_id: 1
+                    product_id: 3
+                    quantity: 1
+                    product:
+                      id: 3
+                      name: "Avowed"
+                      price: "59.99"
+                      stock: 32
+                      
+
+  /orders/{userid}:
+    post:
+      summary: Create a New Order
+      tags:
+        - Orders
+      parameters:
+        - name: userid
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              items:
+                - product_id: 1
+                  quantity: 2
+                - product_id: 3
+                  quantity: 1
+      responses:
+        "201":
+          description: Order created successfully
+          content:
+            application/json:
+              example:
+                message: "Order Created"
+                order:
+                  id: 1
+                  user_id: 1
+                  total: 153.89
+                  status: "pending"
+
+  /orders/{userid}/{orderid}:
+    get:
+      summary: Retrieve an Order
+      tags:
+        - Orders
+      parameters:
+        - name: userid
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: orderid
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Order details retrieved
+          content:
+            application/json:
+              example:
+                id: 1
+                user_id: 1
+                total: 153.89
+                status: "pending"
+                items:
+                  - order_id: 1
+                    product_id: 1
+                    quantity: 2
+                  - order_id: 1
+                    product_id: 3
+                    quantity: 1
+  
+  /products:
+    get:
+      summary: Retrieve All Products
+      tags:
+        - Products
+      responses:
+        "200":
+          description: List of all products
+          content:
+            application/json:
+              example:
+                - id: 1
+                  name: "Dragon Quest 3"
+                  price: 46.95
+                  stock: 7
+                - id: 2
+                  name: "Red Dead Redemption 2"
+                  price: 17.99
+                  stock: 21
+
+  /products/{id}:
+    get:
+      summary: Retrieve a Single Product
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product details retrieved
+          content:
+            application/json:
+              example:
+                id: 3
+                name: "Avowed"
+                price: 59.99
+                stock: 32
+
+
+  /products/{id}/stock:
+    put:
+      summary: Update Product Stock
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              stock: 134
+      responses:
+        "200":
+          description: Stock updated successfully
+          content:
+            application/json:
+              example:
+                message: "Stock Updated"
+                product:
+                  name: "Avowed"
+                  price: "59.99"
+                  stock: 134
+
+  /products/{id}/reviews:
+    get:
+      summary: Get Product Reviews
+      tags:
+        - Product Reviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of product reviews retrieved
+          content:
+            application/json:
+              example:
+                - id: 1
+                  product_id: 1
+                  user_id: 2
+                  rating: 3
+                  comment: "Battle sprites arent great."
+                - id: 2
+                  product_id: 1
+                  user_id: 1
+                  rating: 5
+                  comment: "Nostalgia at its best!"
+  /products/{userid}/{id}/reviews:
+    post:
+      summary: Create a Product Review
+      tags:
+        - Product Reviews
+      parameters:
+        - name: userid
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              rating: 4
+              comment: "Test reviews are the best"
+      responses:
+        "201":
+          description: Review added successfully
+          content:
+            application/json:
+              example:
+                message: "Review Added"
+                review:
+                  id: 1
+                  product_id: 1
+                  user_id: 1
+                  rating: 4
+                  comment: "Test reviews are the best"
+  /user/signup:
+    post:
+      summary: Create a New User
+      tags: 
+      - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Test Auth"
+              email: "testauth@example.com"
+              password: "hashedpasswordauth"
+      responses:
+        "201":
+          description: User successfully created
+          content:
+            application/json:
+              example:
+                id: 1
+                name: "Test Auth"
+                email: "testauth@example.com"
+
+  /user/login:
+    post:
+      summary: Login a User
+      tags: 
+      - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              email: "testauth@example.com"
+              password: "hashedpasswordauth"
+      responses:
+        "200":
+          description: Login successful
+          headers:
+            Set-Cookie:
+              description: Session cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              example:
+                message: "Login successful"
+
+  /user/{id}:
+    get:
+      summary: Get User Details
+      tags: 
+      - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User details retrieved
+          content:
+            application/json:
+              example:
+                id: 1
+                name: "Test User"
+                email: "testuser@example.com"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              example:
+                message: "User Not Found"
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/DaveBewick/game-shop-api/1.0.0
