@@ -28,4 +28,5 @@ The swagger documentation can be found here: https://app.swaggerhub.com/apis-doc
 
 ## Testing
 Testing can be ran from the project folder using jest, it will automatically use the test db and all tests populate the database with data appropriately, data is then wiped before each run.
+Testing here is not intended to cover all use cases as it would in a production application. Learnings taken from this testing approach will be applied to future projects to end up with a more complete test suite, namely using a more struct TDD approach.
 
