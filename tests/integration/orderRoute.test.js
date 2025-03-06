@@ -48,8 +48,6 @@ describe('Order Route:', () => {
       .get(`/orders/${user.id}/1`)
       .set('cookie', cookie)
 
-      console.log('resgetttttt', resGet.body)
-
       expect(resGet.statusCode).toBe(200);
       //Check OrderItems are correct
       expect(resGet.body.items[0]).toMatchObject({ order_id: 1, product_id: 1, quantity: 2 });

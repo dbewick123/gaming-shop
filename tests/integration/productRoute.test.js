@@ -107,8 +107,6 @@ describe('Product Route:', () => {
 
     expect(Array.isArray(res.body)).toBe(true);
     
-    console.log(res.body);
-
     expect(res.body[0]).toMatchObject({id: 1, product_id: 1, user_id: reviewUser.id, rating: 4, comment: 'Battle sprites suck!'})
     expect(res.body[1]).toMatchObject({id: 2, product_id: 1, user_id: user.id, rating: 5, comment: 'Nostalgia at its best!'});
 

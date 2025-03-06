@@ -6,8 +6,8 @@ const { Cart, CartItem, Product } = require('../../models/index');
 const cartRouter = express.Router();
 
 // Fetch user's cart with items
-cartRouter.get('/', isAuthenticated, async (req, res) => {
-  const user_id = req.session.user.id;
+cartRouter.get('/:userid', isAuthenticated, async (req, res) => {
+  const user_id = req.params.userid;
 
   try {
     const cart = await Cart.findOne({
@@ -35,8 +35,8 @@ cartRouter.get('/', isAuthenticated, async (req, res) => {
 });
 
 // Create a new cart with at least one item
-cartRouter.post('/', isAuthenticated, async (req, res) => {
-  const user_id = req.session.user.id;
+cartRouter.post('/:userid', isAuthenticated, async (req, res) => {
+  const user_id = req.params.userid;
 
 
   // Validate input
@@ -59,7 +59,7 @@ cartRouter.post('/', isAuthenticated, async (req, res) => {
       return newCart;
     });
 
-    res.status(201).json({ message: 'Cart created', cart: result });
+    res.status(201).json({ message: 'Cart Created', cart: result });
   } catch (error) {
     console.error('Error creating cart:', error);
     res.status(500).json({ error: error.message });
@@ -67,8 +67,8 @@ cartRouter.post('/', isAuthenticated, async (req, res) => {
 });
 
 // Update cart items (replace existing items)
-cartRouter.put('/', isAuthenticated, async (req, res) => {
-    const user_id = req.session.user.id;
+cartRouter.put('/:userid', isAuthenticated, async (req, res) => {
+    const user_id = req.params.userid;
     const { items } = req.body;
   
     if (!Array.isArray(items) || items.length === 0) {
@@ -82,7 +82,8 @@ cartRouter.put('/', isAuthenticated, async (req, res) => {
       }
   
       // Start transaction
-      await Cart.sequelize.transaction(async (t) => {
+      const result = await Cart.sequelize.transaction(async (t) => {
+        
         for (const item of items) {
           const { product_id, quantity } = item;
   
@@ -117,6 +118,7 @@ cartRouter.put('/', isAuthenticated, async (req, res) => {
           } else {
             if (quantity > 0) {
               // ✅ Add new item if it doesn't exist and quantity > 0
+              console.log('getting here')
               await CartItem.create({
                 cart_id: cart.id,
                 product_id,
@@ -126,9 +128,13 @@ cartRouter.put('/', isAuthenticated, async (req, res) => {
             // If quantity is 0, do nothing (item doesn't exist yet)
           }
         }
+
+        return cart;
+        
+
       });
   
-      res.json({ message: 'Cart updated successfully' });
+      res.status(201).json({ message: 'Cart Updated Successfully', cart: result});
     } catch (error) {
       console.error('Error updating cart:', error);
       res.status(500).json({ error: error.message });
